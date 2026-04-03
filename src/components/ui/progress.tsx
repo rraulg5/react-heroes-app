@@ -1,29 +1,32 @@
-import * as React from "react"
-import { Progress as ProgressPrimitive } from "radix-ui"
+import * as React from 'react';
+import { Progress as ProgressPrimitive } from 'radix-ui';
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils';
 
 function Progress({
+  activeColor = 'bg-primary',
   className,
   value,
   ...props
-}: React.ComponentProps<typeof ProgressPrimitive.Root>) {
+}: React.ComponentProps<typeof ProgressPrimitive.Root> & {
+  activeColor?: string;
+}) {
   return (
     <ProgressPrimitive.Root
-      data-slot="progress"
+      data-slot='progress'
       className={cn(
-        "relative flex h-1 w-full items-center overflow-x-hidden rounded-full bg-muted",
-        className
+        'relative flex h-1 w-full items-center overflow-x-hidden rounded-full bg-muted',
+        className,
       )}
       {...props}
     >
       <ProgressPrimitive.Indicator
-        data-slot="progress-indicator"
-        className="size-full flex-1 bg-primary transition-all"
+        data-slot='progress-indicator'
+        className={cn('size-full flex-1 transition-all', activeColor)}
         style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
       />
     </ProgressPrimitive.Root>
-  )
+  );
 }
 
-export { Progress }
+export { Progress };

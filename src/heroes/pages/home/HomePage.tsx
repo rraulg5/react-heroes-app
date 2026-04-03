@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import { HeroGrid } from '@/heroes/components/HeroGrid';
 import { HeroStats } from '@/heroes/components/HeroStats';
+import { MyBreadcrumbs } from '@/components/custom/MyBreadcrumbs';
 import { MyJumbotron } from '@/components/custom/MyJumbotron';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MyPagination } from '@/components/custom/MyPagination';
 
 export const HomePage = () => {
@@ -18,6 +20,9 @@ export const HomePage = () => {
           title='Superhero Universe'
           description='Discover, explore, and manage your favorite superheroes and villains'
         />
+
+        {/* Breadcrumbs */}
+        <MyBreadcrumbs currentPage='Home' />
 
         {/* Stats Dashboard */}
         <HeroStats />

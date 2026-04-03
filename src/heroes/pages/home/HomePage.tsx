@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { HeroGrid } from '@/heroes/components/HeroGrid';
 import { HeroStats } from '@/heroes/components/HeroStats';
 import { MyJumbotron } from '@/components/custom/MyJumbotron';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MyPagination } from '@/components/custom/MyPagination';
 
 export const HomePage = () => {
   const [activeTab, setActiveTab] = useState<
@@ -62,30 +61,7 @@ export const HomePage = () => {
         </Tabs>
 
         {/* Pagination */}
-        <div className='flex items-center justify-center space-x-2'>
-          <Button variant='outline' size='sm' disabled>
-            <ChevronLeft className='h-4 w-4' />
-            Previous
-          </Button>
-
-          <Button variant='default' size='sm'>
-            1
-          </Button>
-          <Button variant='outline' size='sm'>
-            2
-          </Button>
-          <Button variant='outline' size='sm'>
-            3
-          </Button>
-          <Button variant='ghost' size='sm' disabled>
-            <MoreHorizontal className='h-4 w-4' />
-          </Button>
-
-          <Button variant='outline' size='sm'>
-            Next
-            <ChevronRight className='h-4 w-4' />
-          </Button>
-        </div>
+        <MyPagination totalPages={5} />
       </>
     </>
   );

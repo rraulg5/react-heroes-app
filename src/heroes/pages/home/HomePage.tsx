@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { HeroGrid } from '@/heroes/components/HeroGrid';
@@ -6,11 +7,20 @@ import { HeroStats } from '@/heroes/components/HeroStats';
 import { MyBreadcrumbs } from '@/components/custom/MyBreadcrumbs';
 import { MyJumbotron } from '@/components/custom/MyJumbotron';
 import { MyPagination } from '@/components/custom/MyPagination';
+import { getHeroesByPageAction } from '@/heroes/actions/get-heroes-by-page.action';
 
 export const HomePage = () => {
   const [activeTab, setActiveTab] = useState<
     'all' | 'favorites' | 'heroes' | 'villains'
   >('all');
+
+  const { data } = useQuery({
+    queryKey: ['heroes'],
+    queryFn: () => getHeroesByPageAction(),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+
+  console.log({ data });
 
   return (
     <>

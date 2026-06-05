@@ -1,26 +1,32 @@
-import { useState } from 'react';
+import { useSearchParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
+import { getHeroesByPageAction } from '@/heroes/actions/get-heroes-by-page.action';
 import { HeroGrid } from '@/heroes/components/HeroGrid';
 import { HeroStats } from '@/heroes/components/HeroStats';
 import { MyBreadcrumbs } from '@/components/custom/MyBreadcrumbs';
 import { MyJumbotron } from '@/components/custom/MyJumbotron';
 import { MyPagination } from '@/components/custom/MyPagination';
-import { getHeroesByPageAction } from '@/heroes/actions/get-heroes-by-page.action';
+import { useMemo } from 'react';
 
 export const HomePage = () => {
-  const [activeTab, setActiveTab] = useState<
-    'all' | 'favorites' | 'heroes' | 'villains'
-  >('all');
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const { data } = useQuery({
-    queryKey: ['heroes'],
-    queryFn: () => getHeroesByPageAction(),
+  const activeTab = searchParams.get('tab') || 'all';
+  const page = Number(searchParams.get('page') || 1);
+  const limit = Number(searchParams.get('limit') || 6);
+
+  const selectedTab = useMemo(() => {
+    const validTabs = ['all', 'favorites', 'heroes', 'villains'];
+    return validTabs.includes(activeTab) ? activeTab : 'all';
+  }, [activeTab]);
+
+  const { data: heroesResponse } = useQuery({
+    queryKey: ['heroes', { page, limit }],
+    queryFn: () => getHeroesByPageAction(page, limit),
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
-
-  console.log({ data });
 
   return (
     <>
@@ -38,31 +44,57 @@ export const HomePage = () => {
         <HeroStats />
 
         {/* Tabs */}
-        <Tabs value={activeTab} className='mb-8'>
+        <Tabs value={selectedTab} className='mb-8'>
           <TabsList className='grid w-full grid-cols-4'>
-            <TabsTrigger value='all' onClick={() => setActiveTab('all')}>
+            <TabsTrigger
+              value='all'
+              onClick={() =>
+                setSearchParams((prev) => {
+                  prev.set('tab', 'all');
+                  return prev;
+                })
+              }
+            >
               All Characters (16)
             </TabsTrigger>
             <TabsTrigger
               value='favorites'
               className='flex items-center gap-2'
-              onClick={() => setActiveTab('favorites')}
+              onClick={() =>
+                setSearchParams((prev) => {
+                  prev.set('tab', 'favorites');
+                  return prev;
+                })
+              }
             >
               Favorites (3)
             </TabsTrigger>
-            <TabsTrigger value='heroes' onClick={() => setActiveTab('heroes')}>
+            <TabsTrigger
+              value='heroes'
+              onClick={() =>
+                setSearchParams((prev) => {
+                  prev.set('tab', 'heroes');
+                  return prev;
+                })
+              }
+            >
               Heroes (12)
             </TabsTrigger>
             <TabsTrigger
               value='villains'
-              onClick={() => setActiveTab('villains')}
+              onClick={() =>
+                setSearchParams((prev) => {
+                  prev.set('tab', 'villains');
+                  return prev;
+                })
+              }
             >
               Villains (2)
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value='all'>
-            <HeroGrid />
+            <HeroGrid heroes={heroesResponse?.heroes} />
           </TabsContent>
           <TabsContent value='favorites'>
             <HeroGrid />
@@ -76,7 +108,7 @@ export const HomePage = () => {
         </Tabs>
 
         {/* Pagination */}
-        <MyPagination totalPages={5} />
+        <MyPagination totalPages={heroesResponse?.pages ?? 1} />
       </>
     </>
   );
